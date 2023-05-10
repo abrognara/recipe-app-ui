@@ -1,23 +1,32 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
+import jwt_decode from "jwt-decode";
 import './App.css';
 
 function App() {
+  const [user, setUser] = useState({});
+
+  const handleInitGoogleAccounts = response => {
+    const userFromJwt = jwt_decode(response.credential);
+    console.log(userFromJwt);
+    setUser(userFromJwt)
+  };
+
+  /* global google */
+  useEffect(() => {
+    google.accounts.id.initialize({
+      client_id: "252883769286-1d5it2rfeqtslt3h0mbkrvdb3i7gh0lk.apps.googleusercontent.com",
+      callback: handleInitGoogleAccounts
+    });
+
+    google.accounts.id.renderButton(
+      document.getElementById("signInDiv"),
+      { theme: "outline", size: "large" }
+    );
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div id="signInDiv"></div>
     </div>
   );
 }
